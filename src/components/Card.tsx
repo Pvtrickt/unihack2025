@@ -3,7 +3,7 @@ import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
 import flag from "/Flags.png";
 
 const Card: React.FC = () => {
-  const [selectedValue, setSelectedValue] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
   const [budget, setBudget] = useState<string>("");
   const [serving, setServing] = useState<string>("");
   const [dietRequirements, setDietRequirements] = useState<string[]>([]);
