@@ -1,8 +1,9 @@
 import { useState } from "react";
 import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
+import flag from "/Flags.png";
 
 const Card: React.FC = () => {
-  const [selectedValue, setSelectedValue] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
   const [budget, setBudget] = useState<string>("");
   const [serving, setServing] = useState<string>("");
   const [dietRequirements, setDietRequirements] = useState<string[]>([]);
@@ -75,22 +76,22 @@ const Card: React.FC = () => {
   };
 
   return (
-    <div className="bg-blue-500 flex justify-center h-[90%] w-[50%] items-center flex-col rounded-4xl p-10">
-      <div className="flex h-full w-full bg-amber-300">
+    <div className="bg-amber-50 flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
+      <div className="flex h-full w-full bg-[#fae9b9]">
         <div className="carousel carousel-center w-full snap-x snap-mandatory overflow-x-hidden scroll-smooth">
           <div
             id="slide1"
             className="carousel-item relative w-full snap-start "
           >
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-pink-400 flex-col">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-[#fae9b9] flex-col">
               <h1 className="text-5xl text-[#492b03]">
-                Afforable Eats,
-                <br /> Tailored for you
+                Affordable Eats,
+                <br /> Tailored for you 
               </h1>
               <img src={page1Img} className="p-5 h-[60%] w-[]" />
               <a
                 href="#slide2"
-                className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin"
+                className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-[#492b03]"
               >
                 <p className="py-3 px-8 tracking-widest text-2xl">START</p>
               </a>
@@ -100,9 +101,10 @@ const Card: React.FC = () => {
             id="slide2"
             className="carousel-item relative w-full snap-start "
           >
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-pink-400 flex-col">
-              <h1 className="text-5xl text-[#492b03]">Select your cuisine?</h1>
-              <form>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-amber-100 flex-col text-[#492b03]">
+              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">Select your cuisine!</h1>
+              <img src={flag} alt="Flags" className="h-50 w-auto mb-5" />
+              <form className = "mb-20 text-2xl">
                 <select onChange={handleSelectChange} value={selectedValue}>
                   <option value="">Select an option</option>
                   <option value="Italian">Italian</option>
@@ -113,23 +115,24 @@ const Card: React.FC = () => {
               </form>
               <a
                 href="#slide3"
-                className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] "
               >
+              
                 <p className="py-1 px-3 tracking-widest text-2xl">next</p>
               </a>
             </div>
           </div>
-          <div id="slide3" className="carousel-item relative w-full snap-start">
+          <div id="slide3" className="carousel-item relative w-full snap-start bg-yellow-50">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center  h-full w-full flex-col gap-y-2">
               <h1 className="text-5xl text-[#492b03]">What's your budget?</h1>
-              <label className="input">
-                <p className="text-2xl text-[#492b03]">$</p>
+              <label className="input mt-20 bg-[#492b03] px-4">
+                <p className="text-2xl text-[#492b03] bg-#fae9b9">$</p>
                 <input
                   type="text"
                   value={budget}
                   onChange={handleBudgetInputChange}
-                  placeholder="$00.00"
-                  className="input input-accent input-xl"
+                  placeholder="00.00"
+                  className="input input-accent input-xl bg-[#824f03] px-4 py-4 "
                 />
               </label>
               <div className="flex gap-2">
@@ -149,17 +152,17 @@ const Card: React.FC = () => {
             </div>
           </div>
           <div id="slide4" className="carousel-item relative w-full snap-start">
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
               <h1 className="text-5xl text-[#492b03]">Number of Servings:</h1>
               <label className="input">
-              <p className="text-2xl text-[#492b03]">Servings: </p>
-              <input
-                type="text"
-                value={serving}
-                onChange={handleServingInputChange}
-                placeholder="realistic number pls"
-                className="input input-accent input-xl"
-              />
+                <p className="text-2xl text-[#492b03]">Servings: </p>
+                <input
+                  type="text"
+                  value={serving}
+                  onChange={handleServingInputChange}
+                  placeholder="realistic number pls"
+                  className="input input-accent input-xl"
+                />
               </label>
 
               <div>
@@ -182,35 +185,48 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide5" className="carousel-item relative w-full snap-start">
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between bg-pink-400">
-              <a href="#slide4" className="btn btn-circle">
-                ❮
-              </a>
-              <label>Food allergies:</label>
-              <input
-                type="search"
-                value={allergies}
-                onChange={handleAllergiesInputChange}
-                placeholder=""
-              />
-              <a href="#slide6" className="btn btn-circle">
-                ❯
-              </a>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">Food Allergies:</h1>
+
+              <label className="input">
+                <p className="text-2xl text-[#492b03]">no no foods:</p>
+                <input
+                  type="text"
+                  value={allergies}
+                  onChange={handleAllergiesInputChange}
+                  placeholder=""
+                  className="input input-accent input-xl"
+                />
+              </label>
+              <div className="flex gap-2">
+                <a
+                  href="#slide4"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <a
+                  href="#slide6"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">next</p>
+                </a>
+              </div>
             </div>
           </div>
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between bg-pink-400 items-center">
-              <a href="#slide5" className="btn btn-circle">
-                ❮
-              </a>
-              <fieldset className="flex flex-col">
+          <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
+          <h1 className="text-5xl text-[#492b03]">Dietary Requirements:</h1>
+
+          <fieldset className="flex flex-col">
                 <label>
                   <input
                     type="checkbox"
                     value="halal"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("halal")}
+                    className="checkbox"
                   />
                   Halal
                 </label>
@@ -220,6 +236,7 @@ const Card: React.FC = () => {
                     value="vegetarian"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegetarian")}
+                    className="checkbox"
                   />
                   Vegetarian
                 </label>
@@ -229,6 +246,7 @@ const Card: React.FC = () => {
                     value="vegan"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegan")}
+                    className="checkbox"
                   />
                   Vegan
                 </label>
@@ -238,6 +256,7 @@ const Card: React.FC = () => {
                     value="lactose intolerant"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("lactose intolerant")}
+                    className="checkbox"
                   />
                   Lactose Intolerant
                 </label>
@@ -247,14 +266,25 @@ const Card: React.FC = () => {
                     value="gluten free"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("gluten free")}
+                    className="checkbox"
                   />
                   Gluten Free
                 </label>
               </fieldset>
-
-              <a href="#slide7" className="btn btn-circle">
-                ❯
-              </a>
+              <div className="flex gap-2">
+                <a
+                  href="#slide5"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <a
+                  href="#slide7"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">next</p>
+                </a>
+              </div>
             </div>
           </div>
 
