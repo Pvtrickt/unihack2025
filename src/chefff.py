@@ -1,6 +1,8 @@
 # Note: Replace **<YOUR_APPLICATION_TOKEN>** with your actual Application token
 
-import time
+import os
+from dotenv import load_dotenv
+load_dotenv()
 import json
 import requests
 from typing import Optional
@@ -9,7 +11,8 @@ from typing import Optional
 BASE_API_URL = "https://api.langflow.astra.datastax.com"
 LANGFLOW_ID = "df66745d-aecb-49e7-a25f-bda7a6f96a87"
 FLOW_ID = "18ee740c-ea7a-48dd-8671-f95dbf7e4441"
-APPLICATION_TOKEN = None
+APPLICATION_TOKEN = os.getenv("APPLICATION_TOKEN", "h")
+# print(APPLICATION_TOKEN)
 ENDPOINT = "" # You can set a specific endpoint name in the flow settings
 
 # You can tweak the flow by adding a tweaks dictionary
@@ -20,7 +23,6 @@ TWEAKS = {
   "ChatInput-wPjYy": {},
   "ChatOutput-r3GJy": {}
 }
-
 def run_flow(message: str,
   endpoint: str,
   output_type: str = "chat",
@@ -52,7 +54,7 @@ def run_flow(message: str,
     # print(response.status_code)
     return response.json()
 
-def generateRecipes(cuisine = "any", allergies = "", numServings = "", totalBudget="", dietaryReqs="", remarks=""):
+def generateRecipes(cuisine="any", allergies="", numServings="", totalBudget="", dietaryReqs=[], remarks=""):
     message = "Please give me 3 recipes: A very cheap recipe, A very nutritional recipe, and A very tasty recipe. Please make sure that you use the calculator when you calculate the total cost per serving."
     if cuisine != "":
         message += f" I want to eat {cuisine} cuisine."

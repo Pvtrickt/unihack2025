@@ -25,14 +25,14 @@ def create_file():
         food_allergies = data.get("food_allergies")
 
 
-        # print("starting api")
         result = chefff.generateRecipes(
-            filter_option=filter_option,
-            food_allergies=food_allergies, 
-            serving=serving, 
-            budget=budget, 
-            diet_requirements=diet_requirements, 
-            remarks="")
+            cuisine=filter_option,
+            allergies=food_allergies, 
+            numServings=serving, 
+            totalBudget=budget, 
+            dietaryReqs=diet_requirements, 
+            remarks=""
+        )
 
         return jsonify({"message": f"Generated recipes successfull {result}"}), 200
 
