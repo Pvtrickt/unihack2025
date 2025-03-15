@@ -9,9 +9,9 @@ from typing import Optional
 
 
 BASE_API_URL = "https://api.langflow.astra.datastax.com"
-LANGFLOW_ID = "df66745d-aecb-49e7-a25f-bda7a6f96a87"
-FLOW_ID = "18ee740c-ea7a-48dd-8671-f95dbf7e4441"
-APPLICATION_TOKEN = os.getenv("APPLICATION_TOKEN", "h")
+LANGFLOW_ID = os.getenv("LANGFLOW_ID", "")
+FLOW_ID = os.getenv("FLOW_ID", "")
+APPLICATION_TOKEN = os.getenv("APPLICATION_TOKEN", "")
 # print(APPLICATION_TOKEN)
 ENDPOINT = "" # You can set a specific endpoint name in the flow settings
 
