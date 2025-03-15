@@ -1,13 +1,14 @@
 import { useState } from "react";
 import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
 import flag from "/Flags.png";
-const URL = "https://unihack2025-tomichong-tomi-chongs-projects.vercel.app"
+
 const Card: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
   const [budget, setBudget] = useState<string>("");
   const [serving, setServing] = useState<string>("");
   const [dietRequirements, setDietRequirements] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string>("");
+  const [additionalReq, setAdditionalReq] = useState<string>("");
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
@@ -31,6 +32,12 @@ const Card: React.FC = () => {
     setAllergies(event.target.value);
   };
 
+  const handleAdditionalReqInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setAdditionalReq(event.target.value);
+  };
+
   const handleDietRequirements = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -47,13 +54,10 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(URL + "/create-file", {
+      const response = await fetch("https://unihack25.onrender.com/create-file", {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "https://unihack2025-tomichong-tomi-chongs-projects.vercel.app",
-          "Access-Control-Allow-Headers" : "Origin, Content-Type, Accept"
         },
         body: JSON.stringify({
           filter_option: selectedValue,
@@ -61,6 +65,7 @@ const Card: React.FC = () => {
           servings: serving,
           diet_requirements: dietRequirements,
           food_allergies: allergies,
+          additional_requirements: additionalReq,
         }),
       });
 
@@ -79,24 +84,24 @@ const Card: React.FC = () => {
   };
 
   return (
-    <div className="bg-amber-50 flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
-      <div className="flex h-full w-full bg-[#fae9b9]">
-        <div className="carousel carousel-center w-full snap-x snap-mandatory overflow-x-hidden scroll-smooth">
+    <div className=" flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
+      <div className="flex h-full w-full ">
+        <div className="carousel carousel-center w-full snap-x snap-mandatory overflow-x-hidden scroll-smooth rounded-4xl">
           <div
             id="slide1"
             className="carousel-item relative w-full snap-start "
           >
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-[#fae9b9] flex-col">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full rounded-4xl bg-amber-100 flex-col pt-16 gap-y-6">
               <h1 className="text-5xl text-[#492b03]">
                 Affordable Eats,
-                <br /> Tailored for you 
+                <br /> Tailored for you
               </h1>
               <img src={page1Img} className="p-5 h-[60%] w-[]" />
               <a
                 href="#slide2"
                 className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-[#492b03]"
               >
-                <p className="py-3 px-8 tracking-widest text-2xl">START</p>
+                <p className="py-3 px-8 tracking-widest text-2xl ">START</p>
               </a>
             </div>
           </div>
@@ -105,9 +110,11 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start "
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-amber-100 flex-col text-[#492b03]">
-              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">Select your cuisine!</h1>
+              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">
+                Select your cuisine!
+              </h1>
               <img src={flag} alt="Flags" className="h-50 w-auto mb-5" />
-              <form className = "mb-20 text-2xl">
+              <form className="mb-20 text-2xl">
                 <select onChange={handleSelectChange} value={selectedValue}>
                   <option value="">Select an option</option>
                   <option value="Italian">Italian</option>
@@ -120,13 +127,15 @@ const Card: React.FC = () => {
                 href="#slide3"
                 className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] "
               >
-              
                 <p className="py-1 px-3 tracking-widest text-2xl">next</p>
               </a>
             </div>
           </div>
-          <div id="slide3" className="carousel-item relative w-full snap-start bg-yellow-50">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center  h-full w-full flex-col gap-y-2">
+          <div
+            id="slide3"
+            className="carousel-item relative w-full snap-start bg-yellow-50"
+          >
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center bg-amber-100 h-full w-full flex-col gap-y-2">
               <h1 className="text-5xl text-[#492b03]">What's your budget?</h1>
               <label className="input mt-20 bg-[#492b03] px-4">
                 <p className="text-2xl text-[#492b03] bg-#fae9b9">$</p>
@@ -155,7 +164,7 @@ const Card: React.FC = () => {
             </div>
           </div>
           <div id="slide4" className="carousel-item relative w-full snap-start">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
               <h1 className="text-5xl text-[#492b03]">Number of Servings:</h1>
               <label className="input">
                 <p className="text-2xl text-[#492b03]">Servings: </p>
@@ -188,9 +197,8 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide5" className="carousel-item relative w-full snap-start">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
               <h1 className="text-5xl text-[#492b03]">Food Allergies:</h1>
-
               <label className="input">
                 <p className="text-2xl text-[#492b03]">no no foods:</p>
                 <input
@@ -219,11 +227,11 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
-          <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-pink-400 flex-col justify-center items-center h-full w-full">
-          <h1 className="text-5xl text-[#492b03]">Dietary Requirements:</h1>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">Dietary Requirements:</h1>
 
-          <fieldset className="flex flex-col">
-                <label>
+              <fieldset className="flex flex-col">
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="halal"
@@ -231,9 +239,9 @@ const Card: React.FC = () => {
                     checked={dietRequirements.includes("halal")}
                     className="checkbox"
                   />
-                  Halal
+                  <p className="text-[#492b03]">Halal</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="vegetarian"
@@ -241,9 +249,9 @@ const Card: React.FC = () => {
                     checked={dietRequirements.includes("vegetarian")}
                     className="checkbox"
                   />
-                  Vegetarian
+                  <p className="text-[#492b03]">Vegetarian</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="vegan"
@@ -251,9 +259,9 @@ const Card: React.FC = () => {
                     checked={dietRequirements.includes("vegan")}
                     className="checkbox"
                   />
-                  Vegan
+                  <p className="text-[#492b03]">Vegan</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="lactose intolerant"
@@ -261,9 +269,9 @@ const Card: React.FC = () => {
                     checked={dietRequirements.includes("lactose intolerant")}
                     className="checkbox"
                   />
-                  Lactose Intolerant
+                  <p className="text-[#492b03]"> Lactose Intolerant</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="gluten free"
@@ -271,7 +279,7 @@ const Card: React.FC = () => {
                     checked={dietRequirements.includes("gluten free")}
                     className="checkbox"
                   />
-                  Gluten Free
+                  <p className="text-[#492b03]"> Gluten Free</p>
                 </label>
               </fieldset>
               <div className="flex gap-2">
@@ -292,16 +300,60 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide7" className="carousel-item relative w-full snap-start">
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between bg-pink-400">
-              <a href="#slide6" className="btn btn-circle">
-                ❮
-              </a>
-              <button
-                className="btn btn-soft btn-accent"
-                onClick={handleSubmit}
-              >
-                Gimme Recipe!
-              </button>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">
+                Additional Requirements:
+              </h1>
+              <label className="input">
+                <p className="text-2xl text-[#492b03]"></p>
+                <input
+                  type="text"
+                  value={additionalReq}
+                  onChange={handleAdditionalReqInputChange}
+                  placeholder="etc, high protein meals pls"
+                  className="input input-accent input-xl"
+                />
+              </label>
+              <div className="flex gap-2">
+                <a
+                  href="#slide6"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <a
+                  href="#slide8"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">next</p>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div id="slide8" className="carousel-item relative w-full snap-start">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">
+                shall we get your recipe?
+              </h1>
+              <div className="flex gap-2">
+                <a
+                  href="#slide7"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <button
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">
+                    LET HIM COOK
+                  </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>

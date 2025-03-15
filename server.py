@@ -28,6 +28,7 @@ def create_file():
         serving = data.get("servings")
         diet_requirements = data.get("diet_requirements", [])
         food_allergies = data.get("food_allergies")
+        additional_requirements = data.get("additional_requirements")
 
 
         result = chefff.generateRecipes(
@@ -36,7 +37,8 @@ def create_file():
             numServings=serving, 
             totalBudget=budget, 
             dietaryReqs=diet_requirements, 
-            remarks=""
+            # additional_requirements=additional_requirements,
+            remarks=additional_requirements
         )
 
         return jsonify({"message": f"{result}"}), 200
