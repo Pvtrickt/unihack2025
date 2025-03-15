@@ -2,14 +2,19 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/server.py",
-      "use": "@vercel/node"
+      "src": "server.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/server.py"
+      "dest": "server.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
     }
   ]
 }

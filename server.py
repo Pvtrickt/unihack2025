@@ -1,15 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 
 import chefff
 
-app = Flask(__name__) 
+app = Flask(__name__, static_folder="./dist/", static_url_path="/") 
 
-@app.route('/test', methods=['GET'])
-def test_route():
-    return jsonify({"message": "Flask server is running!"}), 200
+CORS(app, resources={r"/*": {"origins": "https://unihack2025-tomichong-tomi-chongs-projects.vercel.app"}}, supports_credentials=True)
 
+
+@app.route('/', methods=['GET'])
+def home():
+    return send_from_directory(app.static_folder, "index.html")
+
+# Serve favicon
+@app.route('/favicon.ico')
+def favicon():
+    return jsonify({"message": "STOP FAVICON"}), 200
 
 @app.route('/create-file', methods=['POST'])
 def create_file():
@@ -32,8 +39,10 @@ def create_file():
             remarks=""
         )
 
-        return jsonify({"message": f"Generated recipes successfull {result}"}), 200
+        return jsonify({"message": f"{result}"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+if __name__ == '__main__':
+    app.run()
