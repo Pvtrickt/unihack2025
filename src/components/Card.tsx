@@ -54,7 +54,7 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("https://unihack25.onrender.com/create-file", {
+      const response = await fetch("https://unihack25.onrender.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
