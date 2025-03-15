@@ -4,7 +4,7 @@ deployment:
   needs: [pipeline]
   resource_group: vercel-deploy
   variables:
-    VERCEL_TOKEN: 'CHANGE_THIS_HERE' # change this to your vercel token
+    VERCEL_TOKEN: 'iXx5umti3R1PqGQmEOmDJEbG' # change this to your vercel token
   script:
     - npm install --global vercel@canary
     - vercel pull --yes --environment=production --token=${VERCEL_TOKEN}
