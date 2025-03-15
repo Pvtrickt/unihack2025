@@ -348,7 +348,7 @@ const Card: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     handleSubmit();
-                  }}                >
+                  }}>
                   <p className="py-1 px-3 tracking-widest text-2xl">
                     LET HIM COOK
                   </p>
