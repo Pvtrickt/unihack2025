@@ -54,7 +54,7 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("https://unihack25.onrender.com/create-file", {
+      const response = await fetch("https://unihack25.onrender.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -348,7 +348,7 @@ const Card: React.FC = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     handleSubmit();
-                  }}                >
+                  }}>
                   <p className="py-1 px-3 tracking-widest text-2xl">
                     LET HIM COOK
                   </p>
