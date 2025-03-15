@@ -4,9 +4,7 @@ import os
 
 import chefff
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
-# CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})  # Allow Vite frontend
+app = Flask(__name__) 
 
 @app.route('/test', methods=['GET'])
 def test_route():
@@ -39,5 +37,3 @@ def create_file():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5001, debug=True)  # Keep using port 5000

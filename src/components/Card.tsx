@@ -1,7 +1,7 @@
 import { useState } from "react";
 import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
 import flag from "/Flags.png";
-
+const URL = "https://unihack2025-six.vercel.app"
 const Card: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
   const [budget, setBudget] = useState<string>("");
@@ -47,7 +47,7 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5001/create-file", {
+      const response = await fetch(URL + "/create-file", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
