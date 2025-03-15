@@ -2,31 +2,39 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 
+import chefff
+
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})  # Allow Vite frontend
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
+# CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})  # Allow Vite frontend
+
+@app.route('/test', methods=['GET'])
+def test_route():
+    return jsonify({"message": "Flask server is running!"}), 200
+
 
 @app.route('/create-file', methods=['POST'])
 def create_file():
     try:
         data = request.json
+        # print(data)
         filter_option = data.get("filter_option")
         budget = data.get("budget")
         serving = data.get("servings")
         diet_requirements = data.get("diet_requirements", [])
+        food_allergies = data.get("food_allergies")
 
-        if not filter_option:
-            return jsonify({"error": "No file name provided"}), 400
 
-        # Ensure file has a .txt extension
-        file_name = f"request.txt"
-        file_path = os.path.join(os.getcwd(), file_name)
+        # print("starting api")
+        result = chefff.generateRecipes(
+            filter_option=filter_option,
+            food_allergies=food_allergies, 
+            serving=serving, 
+            budget=budget, 
+            diet_requirements=diet_requirements, 
+            remarks="")
 
-        # Write content to the file
-        with open(file_path, "w") as f:
-            f.write(f"Cuisine Option: {filter_option} \nCost per serving: {budget} \nServing size: {serving}")
-            f.write(f"\nDietary Requirements: {', '.join(diet_requirements) if diet_requirements else 'None'}\n")
-
-        return jsonify({"message": f"File '{file_name}' created successfully!"}), 200
+        return jsonify({"message": f"Generated recipes successfull {result}"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
