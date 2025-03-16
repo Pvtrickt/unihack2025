@@ -6,6 +6,8 @@ import Coin from "/Coin.png";
 import Plate from "/Plate.png";
 import No from "/No.png";
 import Chef from "/Chef.png";
+import Fire from "/Fire.png";
+import Chat from "/Chat.png";
 
 const Card: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
@@ -106,8 +108,8 @@ const Card: React.FC = () => {
   const exclusionZoneForButtons = {
     topMin: 20,  // Exclude positions from 75% down to 100% vertically
     topMax: 80, 
-    leftMin: 20,  // Exclude the full width (or adjust if your buttons only take part of the width)
-    leftMax: 80,
+    leftMin: 15,  // Exclude the full width (or adjust if your buttons only take part of the width)
+    leftMax: 85,
   };
 
   interface ImagePosition {
@@ -242,6 +244,17 @@ const Card: React.FC = () => {
     () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
     []
     );
+
+  const randomFireImages = useMemo(
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
+    );
+
+  const randomChatImages = useMemo(
+      () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+      []
+      );
+    
 
   return (
     <div className=" flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
@@ -574,18 +587,34 @@ const Card: React.FC = () => {
 
           <div id="slide8" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">
-                shall we get your recipe?
+              <h1 className="text-5xl text-[#492b03] mb-10">
+                Shall we get your recipe?
               </h1>
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomFireImages.map((img) => (
+            <img
+              key={img.id}
+              src={Fire}
+              alt="Fire"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
               <div className="flex gap-2">
                 <a
                   href="#slide7"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <button
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-red-500"
                   onClick={handleLetHimCook}
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">
@@ -598,11 +627,27 @@ const Card: React.FC = () => {
 
           <div id="slide9" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-3xl text-[#492b03]">
+              <h1 className="text-2xl text-[#492b03] text-center mb-10 px-50">
                 Please wait a couple of seconds while your personal chef to cook
+                <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomChatImages.map((img) => (
+            <img
+              key={img.id}
+              src={Chat}
+              alt="Chat"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
                 <span className="loading loading-dots loading-md ml-3"></span>
                 </h1>
-              <div className="flex flex-row">
+              <div className="flex flex-col justify-center items-center">
                 <p className="text-[#492b03] text-2xl">ChatGPT rn:</p>
                 <img src="https://i.imgflip.com/91lmtp.gif" />
               </div>
