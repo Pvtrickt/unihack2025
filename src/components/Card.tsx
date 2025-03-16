@@ -100,7 +100,7 @@ const Card: React.FC = () => {
         .json()
         .catch(() => ({ message: "No JSON response" }));
       console.log("File created:", data);
-      setRecipeData(data)
+      setRecipeData(data);
     } catch (error) {
       console.error("error with file creation:", error);
     }
@@ -117,10 +117,9 @@ const Card: React.FC = () => {
   //       console.error("Error fetching recipes:", error);
   //     }
   //   };
-  
+
   //   fetchRecipes();
   // }, []);
-  
 
   const exclusionZoneForButtons = {
     topMin: 20, // Exclude positions from 75% down to 100% vertically
@@ -149,7 +148,7 @@ const Card: React.FC = () => {
         return "text-[#492b03]";
     }
   };
-  
+
   // Collision detection: check if two rectangles overlap.
   const isOverlapping = (
     a: { left: number; top: number; width: number; height: number },
@@ -671,7 +670,7 @@ const Card: React.FC = () => {
 
           <div id="slide9" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-2xl text-[#492b03] text-center mb-10 px-50 suranna-regular">
+              <h1 className="text-4xl bold text-[#492b03] text-center mb-10 px-50 suranna-regular">
                 Please wait a couple of seconds while your personal chef to cook
                 <div className="absolute inset-0 -z-10 pointer-events-none">
                   {randomChatImages.map((img) => (
@@ -692,10 +691,19 @@ const Card: React.FC = () => {
                 <span className="loading loading-dots loading-md ml-3"></span>
               </h1>
               <div className="flex flex-col justify-center items-center">
-                <p className="text-[#492b03] text-2xl suranna-regular">
-                  ChatGPT rn:
-                </p>
-                <img src="https://i.imgflip.com/91lmtp.gif" />
+                <div className="flex flex-row">
+                  <p className="text-[#492b03] text-2xl suranna-regular">ChatGPT:</p>
+                  <img
+                    src="https://media1.tenor.com/m/TGCjS1jw2v4AAAAC/hurrying-rushing.gif"
+                    className="h-[60%] w-[60%]"
+                  />
+                </div>
+                <div className="flex flex-row mt-[-100px]">
+                  <p className="text-[#492b03] text-2xl suranna-regular">
+                    So you can:
+                  </p>
+                  <img src="https://i.imgflip.com/91lmtp.gif" />
+                </div>
               </div>
             </div>
           </div>
