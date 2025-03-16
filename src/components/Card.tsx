@@ -5,6 +5,7 @@ import Cash from "/Cash.png";
 import Coin from "/Coin.png";
 import Plate from "/Plate.png";
 import No from "/No.png";
+import Chef from "/Chef.png";
 
 const Card: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
@@ -12,6 +13,7 @@ const Card: React.FC = () => {
   const [serving, setServing] = useState<string>("");
   const [dietRequirements, setDietRequirements] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string>("");
+  const [additionalReq, setAdditionalReq] = useState<string>("");
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
@@ -35,6 +37,12 @@ const Card: React.FC = () => {
     setAllergies(event.target.value);
   };
 
+  const handleAdditionalReqInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setAdditionalReq(event.target.value);
+  };
+
   const handleDietRequirements = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -51,10 +59,10 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5001/create-file", {
+      const response = await fetch("https://unihack25.onrender.com/create-file", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain",
         },
         body: JSON.stringify({
           filter_option: selectedValue,
@@ -62,6 +70,7 @@ const Card: React.FC = () => {
           servings: serving,
           diet_requirements: dietRequirements,
           food_allergies: allergies,
+          additional_requirements: additionalReq,
         }),
       });
 
@@ -80,10 +89,10 @@ const Card: React.FC = () => {
   };
 
   const exclusionZoneForButtons = {
-    topMin: 5,  // Exclude positions from 75% down to 100% vertically
-    topMax: 95, 
-    leftMin: 10,  // Exclude the full width (or adjust if your buttons only take part of the width)
-    leftMax: 90,
+    topMin: 20,  // Exclude positions from 75% down to 100% vertically
+    topMax: 80, 
+    leftMin: 20,  // Exclude the full width (or adjust if your buttons only take part of the width)
+    leftMax: 80,
   };
 
   interface ImagePosition {
@@ -112,7 +121,7 @@ const Card: React.FC = () => {
     exclusion: { topMin: number; topMax: number; leftMin: number; leftMax: number }
   ): ImagePosition[] => {
     // Fixed container dimensions (adjust if needed)
-    const containerWidth = 1000;
+    const containerWidth = 800;
     const containerHeight = 600;
     const positions: ImagePosition[] = [];
     let iterations = 0;
@@ -126,7 +135,7 @@ const Card: React.FC = () => {
       const centerLeft = Math.random() * 100;
   
       // Skip if candidate center is within the exclusion zone.
-      if (
+      if (  
         centerTop >= exclusion.topMin &&
         centerTop <= exclusion.topMax &&
         centerLeft >= exclusion.leftMin &&
@@ -134,6 +143,8 @@ const Card: React.FC = () => {
       ) {
         continue;
       }
+
+      if (centerLeft >= 90 || centerLeft <= 10) continue;
   
       // Random base width between 50 and 150px, and random angle (0-360).
       const width = 50 + Math.random() * 100;
@@ -212,25 +223,30 @@ const Card: React.FC = () => {
   []
   );
 
+  const randomChefImages = useMemo(
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
+    );
+
   return (
-    <div className="bg-amber-50 flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
-      <div className="flex h-full w-full bg-[#fae9b9]">
-        <div className="carousel carousel-center w-full snap-x snap-mandatory overflow-x-hidden scroll-smooth">
+    <div className=" flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
+      <div className="flex h-full w-full ">
+        <div className="carousel carousel-center w-full snap-x snap-mandatory overflow-x-hidden scroll-smooth rounded-4xl">
           <div
             id="slide1"
             className="carousel-item relative w-full snap-start "
           >
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-[#fae9b9] flex-col">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full rounded-4xl bg-amber-100 flex-col pt-16 gap-y-6">
               <h1 className="text-5xl text-[#492b03]">
                 Affordable Eats,
-                <br /> Tailored for you 
+                <br /> Tailored for you
               </h1>
               <img src={page1Img} className="p-5 h-[60%] w-[]" />
               <a
                 href="#slide2"
                 className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-[#492b03]"
               >
-                <p className="py-3 px-8 tracking-widest text-2xl">START</p>
+                <p className="py-3 px-8 tracking-widest text-2xl ">START</p>
               </a>
             </div>
           </div>
@@ -239,9 +255,11 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start "
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-amber-100 flex-col text-[#492b03]">
-              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">Select your cuisine!</h1>
-              <img src={flag} alt="Flags" className="h-50 w-auto" />
-              <form className = "mb-20 text-2xl">
+              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">
+                Select your cuisine!
+              </h1>
+              <img src={flag} alt="Flags" className="h-50 w-auto mb-5" />
+              <form className="mb-20 text-2xl">
                 <select onChange={handleSelectChange} value={selectedValue}>
                   <option value="">Select an option</option>
                   <option value="Italian">Italian</option>
@@ -254,13 +272,15 @@ const Card: React.FC = () => {
                 href="#slide3"
                 className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] "
               >
-              
                 <p className="py-1 px-3 tracking-widest text-2xl">next</p>
               </a>
             </div>
           </div>
-          <div id="slide3" className="carousel-item relative w-full snap-start bg-yellow-50">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center  h-full w-full flex-col gap-y-2">
+          <div
+            id="slide3"
+            className="carousel-item relative w-full snap-start bg-yellow-50"
+          >
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center bg-amber-100 h-full w-full flex-col gap-y-2">
               <h1 className="text-5xl text-[#492b03]">What's your budget?</h1>
               <div className="absolute inset-0 -z-10 pointer-events-none">
           {randomCashImages.map((img) => (
@@ -417,58 +437,58 @@ const Card: React.FC = () => {
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
           <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
-          <h1 className="text-5xl text-[#492b03]">Dietary Requirements:</h1>
+          <h1 className="text-5xl text-[#492b03] mb-10">Dietary Requirements:</h1>
 
-          <fieldset className="flex flex-col">
-                <label>
+              <fieldset className="flex flex-col">
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="halal"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("halal")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
-                  Halal
+                  <p className="text-[#492b03]">Halal</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="vegetarian"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegetarian")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
-                  Vegetarian
+                  <p className="text-[#492b03]">Vegetarian</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="vegan"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegan")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
-                  Vegan
+                  <p className="text-[#492b03]">Vegan</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="lactose intolerant"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("lactose intolerant")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
-                  Lactose Intolerant
+                  <p className="text-[#492b03]"> Lactose Intolerant</p>
                 </label>
-                <label>
+                <label className="flex flex-row gap-2">
                   <input
                     type="checkbox"
                     value="gluten free"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("gluten free")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03] mb-10"
                   />
-                  Gluten Free
+                  <p className="text-[#492b03]"> Gluten Free</p>
                 </label>
               </fieldset>
               <div className="flex gap-2">
@@ -489,16 +509,77 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide7" className="carousel-item relative w-full snap-start">
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between bg-[#fae9b9]">
-              <a href="#slide6" className="btn btn-circle">
-                ❮
-              </a>
-              <button
-                className="btn btn-soft btn-accent"
-                onClick={handleSubmit}
-              >
-                Gimme Recipe!
-              </button>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03] mb-10">
+                Additional Requirements:
+              </h1>
+
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomChefImages.map((img) => (
+            <img
+              key={img.id}
+              src={Chef}
+              alt="Chef"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
+              <label className="input">
+                <p className="text-2xl text-[#492b03]"></p>
+                <input
+                  type="text"
+                  value={additionalReq}
+                  onChange={handleAdditionalReqInputChange}
+                  placeholder="etc, high protein meals pls"
+                  className="input input-accent input-xl"
+                />
+              </label>
+              <div className="flex gap-2">
+                <a
+                  href="#slide6"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] mt-10"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <a
+                  href="#slide8"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] mt-10   "
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">next</p>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div id="slide8" className="carousel-item relative w-full snap-start">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">
+                shall we get your recipe?
+              </h1>
+              <div className="flex gap-2">
+                <a
+                  href="#slide7"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <button
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}>
+                  <p className="py-1 px-3 tracking-widest text-2xl">
+                    LET HIM COOK
+                  </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>
