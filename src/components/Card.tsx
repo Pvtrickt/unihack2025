@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
 import flag from "/Flags.png";
+import Cash from "/Cash.png";
+import Coin from "/Coin.png";
+import Plate from "/Plate.png";
+import No from "/No.png";
+import Chef from "/Chef.png";
+import Fire from "/Fire.png";
+import Chat from "/Chat.png";
 
 const Card: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("Any Cuisine");
@@ -98,6 +105,157 @@ const Card: React.FC = () => {
     }
   };
 
+  const exclusionZoneForButtons = {
+    topMin: 20,  // Exclude positions from 75% down to 100% vertically
+    topMax: 80, 
+    leftMin: 15,  // Exclude the full width (or adjust if your buttons only take part of the width)
+    leftMax: 85,
+  };
+
+  interface ImagePosition {
+    id: number;
+    centerTop: number;   // as percentage (0-100)
+    centerLeft: number;  // as percentage (0-100)
+    width: number;       // base width in pixels
+    angle: number;       // in degrees
+  }
+  
+  // Collision detection: check if two rectangles overlap.
+  const isOverlapping = (
+    a: { left: number; top: number; width: number; height: number },
+    b: { left: number; top: number; width: number; height: number }
+  ) => {
+    return !(
+      a.left + a.width < b.left ||
+      a.left > b.left + b.width ||
+      a.top + a.height < b.top ||
+      a.top > b.top + b.height
+    );
+  };
+  
+  const generateRandomPositions = (
+    count: number,
+    exclusion: { topMin: number; topMax: number; leftMin: number; leftMax: number }
+  ): ImagePosition[] => {
+    // Fixed container dimensions (adjust if needed)
+    const containerWidth = 800;
+    const containerHeight = 600;
+    const positions: ImagePosition[] = [];
+    let iterations = 0;
+    const maxIterations = 2000;
+  
+    while (positions.length < count && iterations < maxIterations) {
+      iterations++;
+  
+      // Generate candidate center as percentages.
+      const centerTop = Math.random() * 100;
+      const centerLeft = Math.random() * 100;
+  
+      // Skip if candidate center is within the exclusion zone.
+      if (  
+        centerTop >= exclusion.topMin &&
+        centerTop <= exclusion.topMax &&
+        centerLeft >= exclusion.leftMin &&
+        centerLeft <= exclusion.leftMax
+      ) {
+        continue;
+      }
+
+      if (centerLeft >= 90 || centerLeft <= 10) continue;
+  
+      // Random base width between 50 and 150px, and random angle (0-360).
+      const width = 50 + Math.random() * 100;
+      const angle = Math.random() * 360;
+  
+      // Convert angle to radians.
+      const rad = (angle * Math.PI) / 180;
+      // Compute the effective size of the rotated square.
+      const effectiveSize = width * (Math.abs(Math.cos(rad)) + Math.abs(Math.sin(rad)));
+  
+      // Convert candidate center (percentage) to pixel coordinates.
+      const centerX = (centerLeft / 100) * containerWidth;
+      const centerY = (centerTop / 100) * containerHeight;
+  
+      // Calculate the candidate's effective bounding box.
+      const candidateBox = {
+        left: centerX - effectiveSize / 2,
+        top: centerY - effectiveSize / 2,
+        width: effectiveSize,
+        height: effectiveSize,
+      };
+  
+      // Check collision against already accepted images.
+      let collides = false;
+      for (let pos of positions) {
+        const posRad = (pos.angle * Math.PI) / 180;
+        const posEffectiveSize = pos.width * (Math.abs(Math.cos(posRad)) + Math.abs(Math.sin(posRad)));
+        const posCenterX = (pos.centerLeft / 100) * containerWidth;
+        const posCenterY = (pos.centerTop / 100) * containerHeight;
+        const posBox = {
+          left: posCenterX - posEffectiveSize / 2,
+          top: posCenterY - posEffectiveSize / 2,
+          width: posEffectiveSize,
+          height: posEffectiveSize,
+        };
+  
+        if (isOverlapping(candidateBox, posBox)) {
+          collides = true;
+          break;
+        }
+      }
+  
+      if (collides) continue;
+  
+      // Candidate accepted.
+      positions.push({
+        id: positions.length,
+        centerTop,
+        centerLeft,
+        width,
+        angle,
+      });
+    }
+  
+    return positions;
+  };
+
+  const MIN_IMAGES = 20;
+  const randomNoImages = useMemo(
+  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+  []
+  );
+
+  const randomCashImages = useMemo(
+  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+  []
+  );
+
+  const randomCoinImages = useMemo(
+  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+  []
+  );
+
+  const randomPlateImages = useMemo(
+  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+  []
+  );
+
+  const randomChefImages = useMemo(
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
+    );
+
+  const randomFireImages = useMemo(
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
+    );
+
+  const randomChatImages = useMemo(
+      () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+      []
+      );
+    
+
   return (
     <div className=" flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
       <div className="flex h-full w-full ">
@@ -152,9 +310,41 @@ const Card: React.FC = () => {
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center bg-amber-100 h-full w-full flex-col gap-y-2">
               <h1 className="text-5xl text-[#492b03] suranna-regular">What's your budget?</h1>
-              <label className="input mt-20 bg-[#492b03] px-4">
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomCashImages.map((img) => (
+            <img
+              key={img.id}
+              src={Cash}
+              alt="Cash"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomCoinImages.map((img) => (
+            <img
+              key={img.id}
+              src={Coin}
+              alt="Coin"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
+              <label className="input mt-20 bg-[#b46b0a] px-4 py-5 mb-10 ">
                 <p className="text-2xl text-[#492b03] bg-#fae9b9">$</p>
-                <input
+                <input  
                   type="text"
                   value={budget}
                   onChange={handleBudgetInputChange}
@@ -165,13 +355,13 @@ const Card: React.FC = () => {
               <div className="flex gap-2">
                 <a
                   href="#slide2"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <a
                   href="#slide4"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">next</p>
                 </a>
@@ -179,9 +369,25 @@ const Card: React.FC = () => {
             </div>
           </div>
           <div id="slide4" className="carousel-item relative w-full snap-start">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">Number of Servings:</h1>
-              <label className="input">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03] mb-10  suranna-regular">Number of Servings:</h1>
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomPlateImages.map((img) => (
+            <img
+              key={img.id}
+              src={Plate}
+              alt="Plate"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
+              <label className="input mb-15">
                 <p className="text-2xl text-[#492b03]">Servings: </p>
                 <input
                   type="text"
@@ -196,13 +402,13 @@ const Card: React.FC = () => {
                 <div className="flex gap-2">
                   <a
                     href="#slide3"
-                    className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                    className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                   >
                     <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                   </a>
                   <a
                     href="#slide5"
-                    className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                    className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                   >
                     <p className="py-1 px-3 tracking-widest text-2xl">next</p>
                   </a>
@@ -212,9 +418,25 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide5" className="carousel-item relative w-full snap-start">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">Food Allergies:</h1>
-              <label className="input">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">Food Allergies:</h1>
+<div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomNoImages.map((img) => (
+            <img
+              key={img.id}
+              src={No}
+              alt="No"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
+              <label className="input mb-15">
                 <p className="text-2xl text-[#492b03]">no no foods:</p>
                 <input
                   type="text"
@@ -227,13 +449,13 @@ const Card: React.FC = () => {
               <div className="flex gap-2">
                 <a
                   href="#slide4"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <a
                   href="#slide6"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">next</p>
                 </a>
@@ -242,8 +464,8 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
-            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">Dietary Requirements:</h1>
+          <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
+          <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">Dietary Requirements:</h1>
 
               <fieldset className="flex flex-col">
                 <label className="flex flex-row gap-2">
@@ -252,7 +474,7 @@ const Card: React.FC = () => {
                     value="halal"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("halal")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
                   <p className="text-[#492b03]">Halal</p>
                 </label>
@@ -262,7 +484,7 @@ const Card: React.FC = () => {
                     value="vegetarian"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegetarian")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
                   <p className="text-[#492b03]">Vegetarian</p>
                 </label>
@@ -272,7 +494,7 @@ const Card: React.FC = () => {
                     value="vegan"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("vegan")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
                   <p className="text-[#492b03]">Vegan</p>
                 </label>
@@ -282,7 +504,7 @@ const Card: React.FC = () => {
                     value="lactose intolerant"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("lactose intolerant")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03]"
                   />
                   <p className="text-[#492b03]"> Lactose Intolerant</p>
                 </label>
@@ -292,7 +514,7 @@ const Card: React.FC = () => {
                     value="gluten free"
                     onChange={handleDietRequirements}
                     checked={dietRequirements.includes("gluten free")}
-                    className="checkbox"
+                    className="checkbox text-[#492b03] mb-10"
                   />
                   <p className="text-[#492b03]"> Gluten Free</p>
                 </label>
@@ -300,13 +522,13 @@ const Card: React.FC = () => {
               <div className="flex gap-2">
                 <a
                   href="#slide5"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <a
                   href="#slide7"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">next</p>
                 </a>
@@ -316,9 +538,26 @@ const Card: React.FC = () => {
 
           <div id="slide7" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">
+              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">
                 Additional Requirements:
               </h1>
+
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomChefImages.map((img) => (
+            <img
+              key={img.id}
+              src={Chef}
+              alt="Chef"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
               <label className="input">
                 <p className="text-2xl text-[#492b03]"></p>
                 <input
@@ -332,13 +571,13 @@ const Card: React.FC = () => {
               <div className="flex gap-2">
                 <a
                   href="#slide6"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] mt-10"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <a
                   href="#slide8"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] mt-10   "
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">next</p>
                 </a>
@@ -348,18 +587,34 @@ const Card: React.FC = () => {
 
           <div id="slide8" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">
-                shall we get your recipe?
+              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">
+                Shall we get your recipe?
               </h1>
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomFireImages.map((img) => (
+            <img
+              key={img.id}
+              src={Fire}
+              alt="Fire"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
               <div className="flex gap-2">
                 <a
                   href="#slide7"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-[#492b03]"
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">back</p>
                 </a>
                 <button
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  className="btn btn-outline rounded-4xl text-[#492b03] h-auto w-auto font-normal hover:text-white mb-15 hover:bg-red-500"
                   onClick={handleLetHimCook}
                 >
                   <p className="py-1 px-3 tracking-widest text-2xl">
@@ -372,12 +627,28 @@ const Card: React.FC = () => {
 
           <div id="slide9" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-3xl text-[#492b03] suranna-regular">
+              <h1 className="text-2xl text-[#492b03] text-center mb-10 px-50 suranna-regular">
                 Please wait a couple of seconds while your personal chef to cook
+                <div className="absolute inset-0 -z-10 pointer-events-none">
+          {randomChatImages.map((img) => (
+            <img
+              key={img.id}
+              src={Chat}
+              alt="Chat"
+              style={{
+                position: "absolute",
+                left: `${img.centerLeft}%`,
+                top: `${img.centerTop}%`,
+                width: `${img.width}px`,
+                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+              }}
+            />
+          ))}
+        </div>
                 <span className="loading loading-dots loading-md ml-3"></span>
-              </h1>
-              <div className="flex flex-row">
-                <p className="text-[#492b03] text-2xl">ChatGPT rn:</p>
+                </h1>
+              <div className="flex flex-col justify-center items-center">
+                <p className="text-[#492b03] text-2xl suranna-regular">ChatGPT rn:</p>
                 <img src="https://i.imgflip.com/91lmtp.gif" />
               </div>
             </div>
