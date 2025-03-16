@@ -1,17 +1,17 @@
 # Note: Replace **<YOUR_APPLICATION_TOKEN>** with your actual Application token
 
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 import json
 import requests
 from typing import Optional
 
 
 BASE_API_URL = "https://api.langflow.astra.datastax.com"
-LANGFLOW_ID = os.environ.get('LANGFLOW_ID')
-FLOW_ID = os.environ.get('FLOW_ID')
-APPLICATION_TOKEN = os.environ.get('APPLICATION_TOKEN')
+LANGFLOW_ID = os.getenv('LANGFLOW_ID')
+FLOW_ID = os.getenv('FLOW_ID')
+APPLICATION_TOKEN = os.getenv('APPLICATION_TOKEN')
 # print(APPLICATION_TOKEN)
 ENDPOINT = "" # You can set a specific endpoint name in the flow settings
 

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import page1Img from "/Screenshot_2025-03-15_155156-removebg-preview.png";
 import flag from "/Flags.png";
 import Cash from "/Cash.png";
@@ -16,6 +16,9 @@ const Card: React.FC = () => {
   const [dietRequirements, setDietRequirements] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string>("");
   const [additionalReq, setAdditionalReq] = useState<string>("");
+  const [recipeData, setRecipeData] = useState<
+    { type: string; text: string }[]
+  >([]);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
@@ -54,7 +57,7 @@ const Card: React.FC = () => {
     // After 7 seconds, navigate to slide10
     setTimeout(() => {
       window.location.hash = "#slide10";
-    }, 7000);
+    }, 30000);
   };
 
   const handleDietRequirements = (
@@ -73,23 +76,20 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(
-        "https://unihack25.onrender.com/create-file",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: JSON.stringify({
-            filter_option: selectedValue,
-            budget: budget,
-            servings: serving,
-            diet_requirements: dietRequirements,
-            food_allergies: allergies,
-            additional_requirements: additionalReq,
-          }),
-        }
-      );
+      const response = await fetch("http://127.0.0.1:5000/create-file", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          filter_option: selectedValue,
+          budget: budget,
+          servings: serving,
+          diet_requirements: dietRequirements,
+          food_allergies: allergies,
+          additional_requirements: additionalReq,
+        }),
+      });
 
       if (!response.ok) {
         console.error(`Error: ${response.status} - ${response.statusText}`);
@@ -97,28 +97,58 @@ const Card: React.FC = () => {
       }
 
       const data = await response
-        .text()
+        .json()
         .catch(() => ({ message: "No JSON response" }));
       console.log("File created:", data);
+      setRecipeData(data)
     } catch (error) {
       console.error("error with file creation:", error);
     }
   };
 
+  // useEffect(() => {
+  //   const fetchRecipes = async () => {
+  //     try {
+  //       const response = await fetch("http://127.0.0.1:5000/create-file"); // Replace with your API
+  //       const data = await response.json();
+  //       console.log("Fetched data:", data); // Check the structure of the returned data
+  //       setRecipeData(data.start);  // Assuming 'start' is the correct field
+  //     } catch (error) {
+  //       console.error("Error fetching recipes:", error);
+  //     }
+  //   };
+  
+  //   fetchRecipes();
+  // }, []);
+  
+
   const exclusionZoneForButtons = {
-    topMin: 20,  // Exclude positions from 75% down to 100% vertically
-    topMax: 80, 
-    leftMin: 15,  // Exclude the full width (or adjust if your buttons only take part of the width)
+    topMin: 20, // Exclude positions from 75% down to 100% vertically
+    topMax: 80,
+    leftMin: 15, // Exclude the full width (or adjust if your buttons only take part of the width)
     leftMax: 85,
   };
 
   interface ImagePosition {
     id: number;
-    centerTop: number;   // as percentage (0-100)
-    centerLeft: number;  // as percentage (0-100)
-    width: number;       // base width in pixels
-    angle: number;       // in degrees
+    centerTop: number; // as percentage (0-100)
+    centerLeft: number; // as percentage (0-100)
+    width: number; // base width in pixels
+    angle: number; // in degrees
   }
+
+  const getClassName = (type: string) => {
+    switch (type) {
+      case "bigAndBold":
+        return "text-2xl font-bold text-[#492b03]";
+      case "big":
+        return "text-xl font-semibold text-[#492b03]";
+      case "bold":
+        return "font-bold text-[#492b03]";
+      default:
+        return "text-[#492b03]";
+    }
+  };
   
   // Collision detection: check if two rectangles overlap.
   const isOverlapping = (
@@ -132,10 +162,15 @@ const Card: React.FC = () => {
       a.top > b.top + b.height
     );
   };
-  
+
   const generateRandomPositions = (
     count: number,
-    exclusion: { topMin: number; topMax: number; leftMin: number; leftMax: number }
+    exclusion: {
+      topMin: number;
+      topMax: number;
+      leftMin: number;
+      leftMax: number;
+    }
   ): ImagePosition[] => {
     // Fixed container dimensions (adjust if needed)
     const containerWidth = 800;
@@ -143,16 +178,16 @@ const Card: React.FC = () => {
     const positions: ImagePosition[] = [];
     let iterations = 0;
     const maxIterations = 2000;
-  
+
     while (positions.length < count && iterations < maxIterations) {
       iterations++;
-  
+
       // Generate candidate center as percentages.
       const centerTop = Math.random() * 100;
       const centerLeft = Math.random() * 100;
-  
+
       // Skip if candidate center is within the exclusion zone.
-      if (  
+      if (
         centerTop >= exclusion.topMin &&
         centerTop <= exclusion.topMax &&
         centerLeft >= exclusion.leftMin &&
@@ -162,20 +197,21 @@ const Card: React.FC = () => {
       }
 
       if (centerLeft >= 90 || centerLeft <= 10) continue;
-  
+
       // Random base width between 50 and 150px, and random angle (0-360).
       const width = 50 + Math.random() * 100;
       const angle = Math.random() * 360;
-  
+
       // Convert angle to radians.
       const rad = (angle * Math.PI) / 180;
       // Compute the effective size of the rotated square.
-      const effectiveSize = width * (Math.abs(Math.cos(rad)) + Math.abs(Math.sin(rad)));
-  
+      const effectiveSize =
+        width * (Math.abs(Math.cos(rad)) + Math.abs(Math.sin(rad)));
+
       // Convert candidate center (percentage) to pixel coordinates.
       const centerX = (centerLeft / 100) * containerWidth;
       const centerY = (centerTop / 100) * containerHeight;
-  
+
       // Calculate the candidate's effective bounding box.
       const candidateBox = {
         left: centerX - effectiveSize / 2,
@@ -183,12 +219,13 @@ const Card: React.FC = () => {
         width: effectiveSize,
         height: effectiveSize,
       };
-  
+
       // Check collision against already accepted images.
       let collides = false;
       for (let pos of positions) {
         const posRad = (pos.angle * Math.PI) / 180;
-        const posEffectiveSize = pos.width * (Math.abs(Math.cos(posRad)) + Math.abs(Math.sin(posRad)));
+        const posEffectiveSize =
+          pos.width * (Math.abs(Math.cos(posRad)) + Math.abs(Math.sin(posRad)));
         const posCenterX = (pos.centerLeft / 100) * containerWidth;
         const posCenterY = (pos.centerTop / 100) * containerHeight;
         const posBox = {
@@ -197,15 +234,15 @@ const Card: React.FC = () => {
           width: posEffectiveSize,
           height: posEffectiveSize,
         };
-  
+
         if (isOverlapping(candidateBox, posBox)) {
           collides = true;
           break;
         }
       }
-  
+
       if (collides) continue;
-  
+
       // Candidate accepted.
       positions.push({
         id: positions.length,
@@ -215,46 +252,45 @@ const Card: React.FC = () => {
         angle,
       });
     }
-  
+
     return positions;
   };
 
   const MIN_IMAGES = 20;
   const randomNoImages = useMemo(
-  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
-  []
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
   );
 
   const randomCashImages = useMemo(
-  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
-  []
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
   );
 
   const randomCoinImages = useMemo(
-  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
-  []
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
   );
 
   const randomPlateImages = useMemo(
-  () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
-  []
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
   );
 
   const randomChefImages = useMemo(
     () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
     []
-    );
+  );
 
   const randomFireImages = useMemo(
     () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
     []
-    );
+  );
 
   const randomChatImages = useMemo(
-      () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
-      []
-      );
-    
+    () => generateRandomPositions(MIN_IMAGES, exclusionZoneForButtons),
+    []
+  );
 
   return (
     <div className=" flex justify-center h-[90%] w-[60%] items-center flex-col rounded-4xl p-10">
@@ -309,42 +345,44 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start bg-yellow-50"
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center bg-amber-100 h-full w-full flex-col gap-y-2">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">What's your budget?</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">
+                What's your budget?
+              </h1>
               <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomCashImages.map((img) => (
-            <img
-              key={img.id}
-              src={Cash}
-              alt="Cash"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
-        <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomCoinImages.map((img) => (
-            <img
-              key={img.id}
-              src={Coin}
-              alt="Coin"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+                {randomCashImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={Cash}
+                    alt="Cash"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+                {randomCoinImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={Coin}
+                    alt="Coin"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
               <label className="input mt-20 bg-[#b46b0a] px-4 py-5 mb-10 ">
                 <p className="text-2xl text-[#492b03] bg-#fae9b9">$</p>
-                <input  
+                <input
                   type="text"
                   value={budget}
                   onChange={handleBudgetInputChange}
@@ -370,23 +408,25 @@ const Card: React.FC = () => {
           </div>
           <div id="slide4" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] mb-10  suranna-regular">Number of Servings:</h1>
+              <h1 className="text-5xl text-[#492b03] mb-10  suranna-regular">
+                Number of Servings:
+              </h1>
               <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomPlateImages.map((img) => (
-            <img
-              key={img.id}
-              src={Plate}
-              alt="Plate"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+                {randomPlateImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={Plate}
+                    alt="Plate"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
               <label className="input mb-15">
                 <p className="text-2xl text-[#492b03]">Servings: </p>
                 <input
@@ -419,23 +459,25 @@ const Card: React.FC = () => {
 
           <div id="slide5" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">Food Allergies:</h1>
-<div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomNoImages.map((img) => (
-            <img
-              key={img.id}
-              src={No}
-              alt="No"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">
+                Food Allergies:
+              </h1>
+              <div className="absolute inset-0 -z-10 pointer-events-none">
+                {randomNoImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={No}
+                    alt="No"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
               <label className="input mb-15">
                 <p className="text-2xl text-[#492b03]">no no foods:</p>
                 <input
@@ -464,8 +506,10 @@ const Card: React.FC = () => {
           </div>
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
-          <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
-          <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">Dietary Requirements:</h1>
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-[#fae9b9] flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03] mb-10 suranna-regular">
+                Dietary Requirements:
+              </h1>
 
               <fieldset className="flex flex-col">
                 <label className="flex flex-row gap-2">
@@ -543,21 +587,21 @@ const Card: React.FC = () => {
               </h1>
 
               <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomChefImages.map((img) => (
-            <img
-              key={img.id}
-              src={Chef}
-              alt="Chef"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+                {randomChefImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={Chef}
+                    alt="Chef"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
               <label className="input">
                 <p className="text-2xl text-[#492b03]"></p>
                 <input
@@ -591,21 +635,21 @@ const Card: React.FC = () => {
                 Shall we get your recipe?
               </h1>
               <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomFireImages.map((img) => (
-            <img
-              key={img.id}
-              src={Fire}
-              alt="Fire"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+                {randomFireImages.map((img) => (
+                  <img
+                    key={img.id}
+                    src={Fire}
+                    alt="Fire"
+                    style={{
+                      position: "absolute",
+                      left: `${img.centerLeft}%`,
+                      top: `${img.centerTop}%`,
+                      width: `${img.width}px`,
+                      transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                    }}
+                  />
+                ))}
+              </div>
               <div className="flex gap-2">
                 <a
                   href="#slide7"
@@ -630,25 +674,27 @@ const Card: React.FC = () => {
               <h1 className="text-2xl text-[#492b03] text-center mb-10 px-50 suranna-regular">
                 Please wait a couple of seconds while your personal chef to cook
                 <div className="absolute inset-0 -z-10 pointer-events-none">
-          {randomChatImages.map((img) => (
-            <img
-              key={img.id}
-              src={Chat}
-              alt="Chat"
-              style={{
-                position: "absolute",
-                left: `${img.centerLeft}%`,
-                top: `${img.centerTop}%`,
-                width: `${img.width}px`,
-                transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
-              }}
-            />
-          ))}
-        </div>
+                  {randomChatImages.map((img) => (
+                    <img
+                      key={img.id}
+                      src={Chat}
+                      alt="Chat"
+                      style={{
+                        position: "absolute",
+                        left: `${img.centerLeft}%`,
+                        top: `${img.centerTop}%`,
+                        width: `${img.width}px`,
+                        transform: `translate(-50%, -50%) rotate(${img.angle}deg)`,
+                      }}
+                    />
+                  ))}
+                </div>
                 <span className="loading loading-dots loading-md ml-3"></span>
-                </h1>
+              </h1>
               <div className="flex flex-col justify-center items-center">
-                <p className="text-[#492b03] text-2xl suranna-regular">ChatGPT rn:</p>
+                <p className="text-[#492b03] text-2xl suranna-regular">
+                  ChatGPT rn:
+                </p>
                 <img src="https://i.imgflip.com/91lmtp.gif" />
               </div>
             </div>
@@ -659,9 +705,19 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start"
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular mb-10">Your recipe!</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">
+                Your recipe!
+              </h1>
               <div className="flex gap-2">
-                <p className="text-[#492b03] mb-15">RESULTS:</p>
+                <p className="text-[#492b03]">RESULTS:</p>
+                <div className="text-black">
+                  {/* {JSON.parse(recipeData).map((type, text) => (
+                    <p key={type} className={getClassName(type)}>
+                      {text}
+                    </p>
+                  ))} */}
+                  {JSON.stringify(recipeData)}
+                </div>
               </div>
               <button
                 className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
