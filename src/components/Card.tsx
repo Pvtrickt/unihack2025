@@ -107,7 +107,7 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start "
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full rounded-4xl bg-amber-100 flex-col pt-16 gap-y-6">
-              <h1 className="text-5xl text-[#492b03]">
+              <h1 className="text-5xl text-[#492b03] suranna-regular">
                 Affordable Eats,
                 <br /> Tailored for you
               </h1>
@@ -125,7 +125,7 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start "
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center w-full h-full bg-amber-100 flex-col text-[#492b03]">
-              <h1 className="text-5xl text-[#492b03] mt-10 mb-5">
+              <h1 className="text-5xl text-[#492b03] mt-10 mb-5 suranna-regular">
                 Select your cuisine!
               </h1>
               <img src={flag} alt="Flags" className="h-50 w-auto mb-5" />
@@ -151,7 +151,7 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start bg-yellow-50"
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform justify-center items-center bg-amber-100 h-full w-full flex-col gap-y-2">
-              <h1 className="text-5xl text-[#492b03]">What's your budget?</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">What's your budget?</h1>
               <label className="input mt-20 bg-[#492b03] px-4">
                 <p className="text-2xl text-[#492b03] bg-#fae9b9">$</p>
                 <input
@@ -180,7 +180,7 @@ const Card: React.FC = () => {
           </div>
           <div id="slide4" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">Number of Servings:</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">Number of Servings:</h1>
               <label className="input">
                 <p className="text-2xl text-[#492b03]">Servings: </p>
                 <input
@@ -213,7 +213,7 @@ const Card: React.FC = () => {
 
           <div id="slide5" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">Food Allergies:</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">Food Allergies:</h1>
               <label className="input">
                 <p className="text-2xl text-[#492b03]">no no foods:</p>
                 <input
@@ -243,7 +243,7 @@ const Card: React.FC = () => {
 
           <div id="slide6" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">Dietary Requirements:</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">Dietary Requirements:</h1>
 
               <fieldset className="flex flex-col">
                 <label className="flex flex-row gap-2">
@@ -316,7 +316,7 @@ const Card: React.FC = () => {
 
           <div id="slide7" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">
+              <h1 className="text-5xl text-[#492b03] suranna-regular">
                 Additional Requirements:
               </h1>
               <label className="input">
@@ -348,7 +348,7 @@ const Card: React.FC = () => {
 
           <div id="slide8" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">
+              <h1 className="text-5xl text-[#492b03] suranna-regular">
                 shall we get your recipe?
               </h1>
               <div className="flex gap-2">
@@ -372,10 +372,10 @@ const Card: React.FC = () => {
 
           <div id="slide9" className="carousel-item relative w-full snap-start">
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-3xl text-[#492b03]">
+              <h1 className="text-3xl text-[#492b03] suranna-regular">
                 Please wait a couple of seconds while your personal chef to cook
                 <span className="loading loading-dots loading-md ml-3"></span>
-                </h1>
+              </h1>
               <div className="flex flex-row">
                 <p className="text-[#492b03] text-2xl">ChatGPT rn:</p>
                 <img src="https://i.imgflip.com/91lmtp.gif" />
@@ -388,10 +388,18 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start"
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03]">Your recipe!</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular">Your recipe!</h1>
               <div className="flex gap-2">
                 <p className="text-[#492b03]">RESULTS:</p>
               </div>
+              <button
+                className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                onClick={handleLetHimCook}
+              >
+                <p className="py-1 px-3 tracking-widest text-2xl">
+                  LET HIM COOK (smth else)
+                </p>
+              </button>
             </div>
           </div>
         </div>
