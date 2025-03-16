@@ -95,7 +95,7 @@ const Card: React.FC = () => {
       }
 
       const data = await response
-        .json()
+        .text()
         .catch(() => ({ message: "No JSON response" }));
       console.log("File created:", data);
     } catch (error) {
@@ -600,29 +600,11 @@ const Card: React.FC = () => {
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
               <h1 className="text-3xl text-[#492b03]">
                 Please wait a couple of seconds while your personal chef to cook
-              </h1>
+                <span className="loading loading-dots loading-md ml-3"></span>
+                </h1>
               <div className="flex flex-row">
                 <p className="text-[#492b03] text-2xl">ChatGPT rn:</p>
                 <img src="https://i.imgflip.com/91lmtp.gif" />
-              </div>
-              <div className="flex gap-2">
-                <a
-                  href="#slide7"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
-                >
-                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
-                </a>
-                <button
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSubmit();
-                  }}
-                >
-                  <p className="py-1 px-3 tracking-widest text-2xl">
-                    LET HIM COOK
-                  </p>
-                </button>
               </div>
             </div>
           </div>
@@ -634,23 +616,7 @@ const Card: React.FC = () => {
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
               <h1 className="text-5xl text-[#492b03]">Your recipe!</h1>
               <div className="flex gap-2">
-                <a
-                  href="#slide7"
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
-                >
-                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
-                </a>
-                <button
-                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSubmit();
-                  }}
-                >
-                  <p className="py-1 px-3 tracking-widest text-2xl">
-                    LET HIM COOK
-                  </p>
-                </button>
+                <p className="text-[#492b03]">RESULTS:</p>
               </div>
             </div>
           </div>
