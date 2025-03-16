@@ -298,7 +298,7 @@ const Card: React.FC = () => {
               </form>
               <a
                 href="#slide3"
-                className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03] "
+                className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
               >
                 <p className="py-1 px-3 tracking-widest text-2xl">next</p>
               </a>
@@ -659,12 +659,12 @@ const Card: React.FC = () => {
             className="carousel-item relative w-full snap-start"
           >
             <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
-              <h1 className="text-5xl text-[#492b03] suranna-regular">Your recipe!</h1>
+              <h1 className="text-5xl text-[#492b03] suranna-regular mb-10">Your recipe!</h1>
               <div className="flex gap-2">
-                <p className="text-[#492b03]">RESULTS:</p>
+                <p className="text-[#492b03] mb-15">RESULTS:</p>
               </div>
               <button
-                className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                className="btn btn-outline rounded-4xl px-10 py-2 text-[#492b03] font-normal text-2xl hover:text-white mb-15 hover:bg-[#492b03]"
                 onClick={handleLetHimCook}
               >
                 <p className="py-1 px-3 tracking-widest text-2xl">
