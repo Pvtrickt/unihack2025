@@ -43,6 +43,18 @@ const Card: React.FC = () => {
     setAdditionalReq(event.target.value);
   };
 
+  const handleLetHimCook = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    // Submit your data
+    handleSubmit();
+    // Navigate to the loading screen (slide9)
+    window.location.hash = "#slide9";
+    // After 7 seconds, navigate to slide10
+    setTimeout(() => {
+      window.location.hash = "#slide10";
+    }, 7000);
+  };
+
   const handleDietRequirements = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -59,20 +71,23 @@ const Card: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch("https://unihack25.onrender.com/create-file", {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-        body: JSON.stringify({
-          filter_option: selectedValue,
-          budget: budget,
-          servings: serving,
-          diet_requirements: dietRequirements,
-          food_allergies: allergies,
-          additional_requirements: additionalReq,
-        }),
-      });
+      const response = await fetch(
+        "https://unihack25.onrender.com/create-file",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({
+            filter_option: selectedValue,
+            budget: budget,
+            servings: serving,
+            diet_requirements: dietRequirements,
+            food_allergies: allergies,
+            additional_requirements: additionalReq,
+          }),
+        }
+      );
 
       if (!response.ok) {
         console.error(`Error: ${response.status} - ${response.statusText}`);
@@ -571,10 +586,67 @@ const Card: React.FC = () => {
                 </a>
                 <button
                   className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  onClick={handleLetHimCook}
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">
+                    LET HIM COOK
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="slide9" className="carousel-item relative w-full snap-start">
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-3xl text-[#492b03]">
+                Please wait a couple of seconds while your personal chef to cook
+              </h1>
+              <div className="flex flex-row">
+                <p className="text-[#492b03] text-2xl">ChatGPT rn:</p>
+                <img src="https://i.imgflip.com/91lmtp.gif" />
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href="#slide7"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <button
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
                   onClick={(e) => {
                     e.preventDefault();
                     handleSubmit();
-                  }}>
+                  }}
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">
+                    LET HIM COOK
+                  </p>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="slide10"
+            className="carousel-item relative w-full snap-start"
+          >
+            <div className="absolute top-1/2 flex -translate-y-1/2 transform bg-amber-100 flex-col justify-center items-center h-full w-full">
+              <h1 className="text-5xl text-[#492b03]">Your recipe!</h1>
+              <div className="flex gap-2">
+                <a
+                  href="#slide7"
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                >
+                  <p className="py-1 px-3 tracking-widest text-2xl">back</p>
+                </a>
+                <button
+                  className="btn btn-outline rounded-4xl text-white h-auto w-auto font-thin text-2xl"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                >
                   <p className="py-1 px-3 tracking-widest text-2xl">
                     LET HIM COOK
                   </p>
